@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hariniaina Dylan — Développeur Web Full-Stack">
+    <title>Dylan — Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ========== NAVIGATION ========== -->
+    <header id="header">
+        <div class="header-container">
+            <a href="#home" class="logo">
+                <img src="ressource/entete-nav.png" alt="Dylan Logo" class="logo-img">
+            </a>
+            <nav id="navbar">
+                <a href="#home" class="nav-link active">Accueil</a>
+                <a href="#about" class="nav-link">À propos</a>
+                <a href="#skills" class="nav-link">Compétences</a>
+                <a href="#projects" class="nav-link">Projets</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <button id="menu-toggle" class="menu-toggle" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ========== HERO (Podium-Style) ========== -->
+    <section id="home" class="hero-section">
+        <!-- Background watermark logo -->
+        <div class="hero-watermark">
+            <img src="ressource/logo.png" alt="" class="watermark-logo">
+        </div>
+
+        <!-- Hero Content -->
+        <div class="container hero-container-align">
+            <div class="hero-content-wrapper">
+                <span class="hero-intro-tag">Hi, I am</span>
+                <h1 class="hero-name-large">Dylan</h1>
+                <p class="hero-subline">
+                    Développeur web passionné par la création d'applications performantes, d'interfaces technologiques élégantes et d'expériences utilisateur fluides.
+                </p>
+                <span class="hero-availability-badge">
+                    <span class="availability-dot"></span>
+                    Prêt pour un stage
+                </span>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-grid-bento">
+                <!-- Left: Main Story Card -->
+                <div class="about-main-card">
+                    <div class="about-tag-badge">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>L3 — ITUniversity</span>
+                    </div>
+                    <h2 class="about-section-title">À PROPOS</h2>
+                    <p class="about-lead">
+                        Étudiant en 3ème année de Licence à <strong>ITUniversity</strong>, je me passionne pour le développement web du <strong>backend</strong> au <strong>frontend</strong> et la création d'expériences digitales modernes.
+                    </p>
+                    <p class="about-text">
+                        Actuellement en tant qu'étudiant, je recherche un <strong>stage professionnel</strong> pour m'intégrer dans le monde de l'entreprise. Ce stage est l'opportunité idéale d'apporter ma rigueur, de développer mes compétences sur des projets réels et de contribuer à la réussite de votre équipe.
+                    </p>
+                    <div class="about-action">
+                        <a href="#" class="btn-cv-download">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                            <span>Télécharger mon CV</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right: Interactive Stats Bento Grid -->
+                <div class="about-stats-bento">
+                    <div class="bento-card">
+                        <div class="bento-icon-wrapper">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="bento-info">
+                            <span class="bento-number">L3</span>
+                            <span class="bento-label">Niveau d'études</span>
+                        </div>
+                    </div>
+                    <div class="bento-card">
+                        <div class="bento-icon-wrapper">
+                            <i class="fa-solid fa-diagram-project"></i>
+                        </div>
+                        <div class="bento-info">
+                            <span class="bento-number">5+</span>
+                            <span class="bento-label">Projets réalisés</span>
+                        </div>
+                    </div>
+                    <div class="bento-card">
+                        <div class="bento-icon-wrapper">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <div class="bento-info">
+                            <span class="bento-number">7</span>
+                            <span class="bento-label">Langages masterisés</span>
+                        </div>
+                    </div>
+                    <div class="bento-card">
+                        <div class="bento-icon-wrapper">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <div class="bento-info">
+                            <span class="bento-number">5</span>
+                            <span class="bento-label">Frameworks web</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SKILLS (Tech Matrix Table) ========== -->
+    <section id="skills" class="skills-section">
+        <div class="container">
+            <h2 class="about-section-title">COMPÉTENCES</h2>
+            
+            <div class="skills-table-container">
+                <table class="tech-matrix-table">
+                    <thead>
+                        <tr>
+                            <th class="col-domain"><i class="fa-solid fa-layer-group"></i> Domaine</th>
+                            <th class="col-stack"><i class="fa-solid fa-code"></i> Technologies & Outils</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-code"></i> Langages
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill"><i class="fa-brands fa-html5"></i> HTML</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-css3-alt"></i> CSS</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-js"></i> JavaScript</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-php"></i> PHP</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-java"></i> Java</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-code"></i> C#</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-desktop"></i> Frontend
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill highlight-pill"><i class="fa-brands fa-react"></i> React</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-server"></i> Backend
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill"><i class="fa-solid fa-leaf"></i> Spring Boot</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-java"></i> Servlet</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-laravel"></i> Laravel</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-cube"></i> .NET</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-database"></i> Bases de données
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill"><i class="fa-solid fa-database"></i> MySQL</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-database"></i> PostgreSQL</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-database"></i> Oracle</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-database"></i> SQL Server</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-palette"></i> Logiciels de design
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill"><i class="fa-solid fa-pen-nib"></i> Adobe XD</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-vector-square"></i> Adobe Illustrator</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-image"></i> Adobe Photoshop</span>
+                                    <span class="tech-pill"><i class="fa-solid fa-book-open"></i> Adobe InDesign</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="domain-cell">
+                                <span class="domain-tag">
+                                    <i class="fa-solid fa-wrench"></i> Autres outils
+                                </span>
+                            </td>
+                            <td class="stack-cell">
+                                <div class="tech-pill-group">
+                                    <span class="tech-pill"><i class="fa-brands fa-git-alt"></i> Git</span>
+                                    <span class="tech-pill"><i class="fa-brands fa-github"></i> GitHub</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PROJECTS ========== -->
+    <section id="projects" class="projects-section">
+        <div class="container">
+            <h2 class="about-section-title">PROJETS</h2>
+            
+            <div class="projects-grid">
+                <!-- Projet 1: Jeu de Basket 2D -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">Jeu de Basket 2D</h3>
+                            <a href="https://github.com/Dylan003554/Jeu-Basket" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Développement d'un jeu de basket 2D interactif intégrant la sauvegarde de partie en temps réel (positions des joueurs sur le terrain, tableau des scores, possesseur de la balle).
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">.NET</span>
+                            <span class="tech-badge">HFSQL</span>
+                            <span class="tech-badge">Jeux 2D</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 2: E-Commerce de Tissu -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">E-Commerce de Tissu</h3>
+                            <a href="https://github.com/Dylan003554/E-commerce-Tissu" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Plateforme complète avec BackOffice (entrées/sorties de stock, statistiques de chiffre d'affaires) et FrontOffice (panier d'achat, catalogue produits et gestion des livraisons).
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Java</span>
+                            <span class="tech-badge">Servlet</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 3: Gestion des Notes Étudiants (Akatso) -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">Gestion des Notes (Akatso)</h3>
+                            <a href="https://github.com/Dylan003554/Gestion-de-note-Major-" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Système de gestion académique pour le suivi des notes des étudiants et la détermination automatique du "Major des Majors" pour chaque département.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Java</span>
+                            <span class="tech-badge">JavaBeans</span>
+                            <span class="tech-badge">MySQL</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                            <span class="tech-badge">Oracle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 4: Gestion de Forage -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-bore-hole"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">Gestion de Projets de Forage</h3>
+                            <a href="https://github.com/Dylan003554/FORAGE" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Application de création de devis, suivi des statuts d'avancement des chantiers et calcul automatique du temps écoulé entre chaque étape de travail.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Spring Boot</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 5: Gestion d'Élevage de Poissons -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-fish"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">Gestion d'Élevage de Poissons</h3>
+                            <a href="https://github.com/Dylan003554/fish-farming" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Application de gestion aquacole : suivi multi-bassins, planification des rations d'alimentation et identification automatique des poissons prêts à la vente.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Spring Boot</span>
+                            <span class="tech-badge">Java</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projet 6: Réservation et Optimisation de Transport -->
+                <div class="project-card">
+                    <div class="project-image-placeholder">
+                        <div class="project-overlay">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                    </div>
+                    <div class="project-body">
+                        <div class="project-card-top">
+                            <h3 class="project-title">Optimisation de Transport</h3>
+                            <a href="https://github.com/Dylan003554/Optimisation-voyage" target="_blank" rel="noopener noreferrer" class="project-github-btn" title="Voir sur GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                        </div>
+                        <p class="project-desc">
+                            Système intelligent de réservation de transport avec algorithme d'optimisation de trajets tenant compte des distances, des capacités des véhicules et du type de carburant.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Spring Boot</span>
+                            <span class="tech-badge">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact" class="contact-section">
+        <!-- Decoration background blobs -->
+        <div class="contact-decor-blob contact-blob-1"></div>
+        <div class="contact-decor-blob contact-blob-2"></div>
+
+        <div class="container" style="position: relative; z-index: 2;">
+            <h2 class="about-section-title">CONTACT</h2>
+            <p class="contact-subtitle">Une opportunité de stage ? Un projet ? N'hésitez pas à me contacter.</p>
+
+            <div class="contact-layout">
+                <!-- Left: Info Cards -->
+                <div class="contact-info-panel">
+                    <a href="mailto:dylanraberanto00@gmail.com" class="contact-info-card">
+                        <div class="contact-info-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <span class="contact-info-label">Email</span>
+                            <span class="contact-info-value">dylanraberanto00@gmail.com</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right contact-card-arrow"></i>
+                    </a>
+
+                    <a href="tel:+261340126842" class="contact-info-card">
+                        <div class="contact-info-icon">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <span class="contact-info-label">Téléphone</span>
+                            <span class="contact-info-value">034 01 268 42</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-right contact-card-arrow"></i>
+                    </a>
+
+                    <div class="contact-info-card no-hover">
+                        <div class="contact-info-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="contact-info-text">
+                            <span class="contact-info-label">Localisation</span>
+                            <span class="contact-info-value">Antananarivo, Madagascar</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-social-row">
+                        <span class="contact-social-label">Retrouvez-moi</span>
+                        <div class="contact-social-icons">
+                            <a href="https://github.com/Dylan003554" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub">
+                                <i class="fa-brands fa-github"></i>
+                            </a>
+                            <a href="https://www.instagram.com/dii.louu?igsh=a3I5N2FwamZrb3Ri&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-btn" title="Instagram">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="https://www.facebook.com/share/17iQMu2sNu/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook">
+                                <i class="fa-brands fa-facebook-f"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Contact Form -->
+                <div class="contact-form-panel">
+                    <div class="contact-form-header">
+                        <h3>Envoyer un message</h3>
+                        <p>Je répondrai dans les plus brefs délais.</p>
+                    </div>
+                    <form id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Votre nom</label>
+                                <input type="text" id="name" name="name" placeholder="Dylan Raberanto" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Votre email</label>
+                                <input type="email" id="email" name="email" placeholder="vous@email.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Sujet</label>
+                            <input type="text" id="subject" name="subject" placeholder="Proposition de stage, Question..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="5" placeholder="Bonjour Dylan, je souhaite vous contacter au sujet de..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-send-contact" id="btn-send">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Envoyer le message</span>
+                        </button>
+                        <p class="form-status" id="form-status"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
