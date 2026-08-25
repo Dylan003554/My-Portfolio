@@ -448,22 +448,14 @@ window.addEventListener('scroll', revealOnScroll);
             if (response.ok && data.success) {
                 sendCount++;
                 lastSendTime = Date.now();
+                if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
                 
                 // Réinitialiser les champs texte
                 document.getElementById('subject').value = '';
                 document.getElementById('message').value = '';
 
-                if (sendCount >= 2) {
-                    if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
-                    formStatus.textContent = "Trop de tentatives d'envoi";
-                    formStatus.className = 'form-status error';
-                } else {
-                    formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
-                    formStatus.className = 'form-status success';
-                    
-                    // Lancer le décompte live de 60s
-                    startCooldownTimer(60);
-                }
+                formStatus.textContent = `✓ ${data.message || 'Message envoyé avec succès'}`;
+                formStatus.className = 'form-status success';
             } else {
                 const errStr = data.error || '';
                 if (errStr.startsWith('cooldown:')) {
