@@ -242,56 +242,213 @@ revealOnScroll();
 window.addEventListener('scroll', revealOnScroll);
 
 // ========================================
-// CONTACT FORM — EmailJS (sendForm officiel)
+// CONTACT FORM — Google Auth + Vercel API + Anti-Spam
 // ========================================
 (function () {
-    // ─── VOS CLÉS EMAILJS ─────────────────────────────────────────────────────
-    // Récupérez ces valeurs sur https://dashboard.emailjs.com/
-    //   - Public Key  : Account → API Keys → Public Key
-    //   - Service ID  : Email Services → votre service → Service ID
-    //   - Template ID : Email Templates → votre template → Template ID
-    const EMAILJS_PUBLIC_KEY = 'iL_aGupBFyMkdP6fm';   // ex: 'xK9_aBcDeF123...'
-    const EMAILJS_SERVICE_ID = 'service_hpvtp3b';   // ex: 'service_xxxxxx'
-    const EMAILJS_TEMPLATE_ID = 'template_3fq4c9n';  // ex: 'template_yyyyyy'
-    // ─────────────────────────────────────────────────────────────────────────
-
-    // Initialisation EmailJS avec la Public Key
-    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-
-    const contactForm = document.getElementById('contact-form');
-    const btnSend     = document.getElementById('btn-send');
-    const formStatus  = document.getElementById('form-status');
+    const contactForm      = document.getElementById('contact-form');
+    const btnSend          = document.getElementById('btn-send');
+    const formStatus       = document.getElementById('form-status');
+    const googleAuthBox    = document.getElementById('google-auth-box');
+    const googleUserBadge  = document.getElementById('google-user-badge');
+    const googleUserEmail  = document.getElementById('google-user-email');
+    const btnGoogleLogout  = document.getElementById('btn-google-logout');
+    const nameInput        = document.getElementById('name');
+    const emailInput       = document.getElementById('email');
 
     if (!contactForm) return;
 
-    contactForm.addEventListener('submit', function (event) {
+    // ─── ETAT D'AUTHENTIFICATION GOOGLE ──────────────────────────────────────
+    let googleCredentialToken = null;
+
+    // ─── ANTI-SPAM CONFIG ─────────────────────────────────────────────────────
+    const MAX_SENDS_PER_SESSION = 3;
+    const COOLDOWN_MS           = 60000;
+    const MIN_FILL_TIME_MS      = 3000;
+
+    let sendCount    = 0;
+    let lastSendTime = 0;
+    const formLoadTime = Date.now();
+
+    // Vérification initiale si le Client ID Google est configuré
+    const gIdOnload = document.getElementById('g_id_onload');
+    if (gIdOnload && gIdOnload.getAttribute('data-client_id') === 'YOUR_GOOGLE_CLIENT_ID') {
+        if (formStatus) {
+            formStatus.textContent = '⚙ Clé Google manquante : Remplacez "YOUR_GOOGLE_CLIENT_ID" dans index.html par votre vrai ID client Google Cloud Console.';
+            formStatus.className = 'form-status error';
+        }
+    }
+
+    // Helper pour décoder le jeton JWT Google côté client (affichage UI rapide)
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error('Erreur parsing JWT:', e);
+            return null;
+        }
+    }
+
+    // ─── CALLBACK GOOGLE IDENTITY SERVICES ────────────────────────────────────
+    window.handleGoogleCredentialResponse = function (response) {
+        if (!response || !response.credential) {
+            console.error('Réponse Google invalide');
+            return;
+        }
+
+        const tokenPayload = parseJwt(response.credential);
+        if (!tokenPayload || !tokenPayload.email) {
+            formStatus.textContent = '✗ Impossible de lire les informations de votre compte Google.';
+            formStatus.className = 'form-status error';
+            return;
+        }
+
+        // Sauvegarde du jeton certifié
+        googleCredentialToken = response.credential;
+
+        // Pré-remplissage et verrouillage de l'adresse email
+        emailInput.value = tokenPayload.email;
+        emailInput.readOnly = true;
+
+        // Pré-remplissage du nom si vide
+        if (tokenPayload.name && (!nameInput.value || nameInput.value.trim() === '')) {
+            nameInput.value = tokenPayload.name;
+        }
+
+        // Mise à jour de l'affichage UI
+        googleUserEmail.textContent = tokenPayload.email;
+        if (googleAuthBox) googleAuthBox.style.display = 'none';
+        if (googleUserBadge) googleUserBadge.style.display = 'flex';
+
+        // Déverrouillage du bouton d'envoi
+        btnSend.disabled = false;
+        btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Envoyer le message</span>';
+        formStatus.textContent = '✓ Compte Google vérifié avec succès. Vous pouvez envoyer votre message.';
+        formStatus.className = 'form-status success';
+    };
+
+    // ─── GESTION DE LA DÉCONNEXION GOOGLE ──────────────────────────────────────
+    if (btnGoogleLogout) {
+        btnGoogleLogout.addEventListener('click', function () {
+            googleCredentialToken = null;
+
+            // Réinitialisation du champ email
+            emailInput.value = '';
+            emailInput.readOnly = false;
+            googleUserEmail.textContent = '';
+
+            // Bascule UI
+            if (googleUserBadge) googleUserBadge.style.display = 'none';
+            if (googleAuthBox) googleAuthBox.style.display = 'flex';
+
+            // Verrouillage du bouton d'envoi
+            btnSend.disabled = true;
+            btnSend.innerHTML = '<i class="fa-solid fa-lock"></i> <span>Authentifiez-vous avec Google pour envoyer</span>';
+            formStatus.textContent = '';
+            formStatus.className = 'form-status';
+
+            // Re-initialisation du bouton Google si nécessaire
+            if (window.google && window.google.accounts && window.google.accounts.id) {
+                window.google.accounts.id.cancel();
+            }
+        });
+    }
+
+    // ─── SOUMISSION DU FORMULAIRE VIA API BACKEND VERCEL ───────────────────────
+    contactForm.addEventListener('submit', async function (event) {
         event.preventDefault();
 
-        // --- État : Envoi en cours ---
+        // Vérification stricte : l'utilisateur DOIT être connecté Google
+        if (!googleCredentialToken) {
+            formStatus.textContent = '⚠ Veuillez vous connecter avec votre compte Google avant d\'envoyer.';
+            formStatus.className = 'form-status error';
+            return;
+        }
+
+        // 1. Honeypot check
+        const honeypot = document.getElementById('website');
+        if (honeypot && honeypot.value !== '') {
+            formStatus.textContent = '✓ Message envoyé avec succès !';
+            formStatus.className = 'form-status success';
+            contactForm.reset();
+            return;
+        }
+
+        // 2. Rate Limiting
+        if (sendCount >= MAX_SENDS_PER_SESSION) {
+            formStatus.textContent = '⚠ Vous avez atteint la limite d\'envoi pour cette session.';
+            formStatus.className = 'form-status error';
+            return;
+        }
+
+        const now = Date.now();
+        const timeSinceLastSend = now - lastSendTime;
+        if (lastSendTime > 0 && timeSinceLastSend < COOLDOWN_MS) {
+            const secsLeft = Math.ceil((COOLDOWN_MS - timeSinceLastSend) / 1000);
+            formStatus.textContent = `⏳ Veuillez patienter ${secsLeft}s avant de renvoyer un message.`;
+            formStatus.className = 'form-status error';
+            return;
+        }
+
+        // 3. Anti-bot speed check
+        if (now - formLoadTime < MIN_FILL_TIME_MS) {
+            formStatus.textContent = '✓ Message envoyé avec succès !';
+            formStatus.className = 'form-status success';
+            contactForm.reset();
+            return;
+        }
+
+        // 4. Envoi de la requête au backend Vercel pour vérification et envoi EmailJS
         btnSend.disabled = true;
-        btnSend.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Envoi en cours...</span>';
+        btnSend.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Vérification et envoi...</span>';
         formStatus.textContent = '';
         formStatus.className = 'form-status';
 
-        // --- Envoi via EmailJS sendForm() ---
-        // sendForm() lit automatiquement tous les champs name/email/subject/message
-        // du formulaire et les envoie aux variables {{name}} {{email}} {{subject}} {{message}} du template
-        emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, contactForm)
-            .then(function () {
-                // --- Succès ---
-                formStatus.textContent = '✓ Message envoyé avec succès ! Je vous répondrai très rapidement.';
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    credential: googleCredentialToken,
+                    name: nameInput.value,
+                    subject: document.getElementById('subject').value,
+                    message: document.getElementById('message').value,
+                    honeypot: honeypot ? honeypot.value : ''
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                sendCount++;
+                lastSendTime = Date.now();
+                formStatus.textContent = `✓ ${data.message || 'Message envoyé avec succès !'}`;
                 formStatus.className = 'form-status success';
-                contactForm.reset();
-            })
-            .catch(function (error) {
-                // --- Erreur ---
-                console.error('[EmailJS] Erreur lors de l\'envoi :', error);
-                formStatus.textContent = '✗ Erreur lors de l\'envoi. Veuillez réessayer ou contactez-moi à dylanraberanto00@gmail.com';
+                
+                // Réinitialiser les champs texte (sujet + message), tout en conservant le token Google
+                document.getElementById('subject').value = '';
+                document.getElementById('message').value = '';
+            } else {
+                formStatus.textContent = `✗ ${data.error || 'Erreur lors de l\'envoi du message.'}`;
                 formStatus.className = 'form-status error';
-            })
-            .finally(function () {
+            }
+        } catch (error) {
+            console.error('[Frontend] Erreur de communication avec le backend Vercel:', error);
+            formStatus.textContent = '✗ Impossible de contacter le serveur d\'envoi. Vérifiez votre connexion.';
+            formStatus.className = 'form-status error';
+        } finally {
+            if (googleCredentialToken) {
                 btnSend.disabled = false;
                 btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Envoyer le message</span>';
-            });
+            }
+        }
     });
 })();
+
+

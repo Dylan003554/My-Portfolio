@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-dylan",
+  "version": "1.0.0",
+  "description": "Portfolio Hariniaina Dylan - Vercel Serverless API avec Google OAuth",
+  "main": "api/send-email.js",
+  "type": "commonjs",
+  "dependencies": {
+    "google-auth-library": "^9.14.0"
+  }
+}

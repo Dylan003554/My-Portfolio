@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -462,17 +463,56 @@
                 <div class="contact-form-panel">
                     <div class="contact-form-header">
                         <h3>Envoyer un message</h3>
-                        <p>Je répondrai dans les plus brefs délais.</p>
+                        <p>Veuillez vous authentifier avec Google pour débloquer l'envoi.</p>
                     </div>
+
+                    <!-- Google Authentication Container -->
+                    <div class="google-auth-box" id="google-auth-box">
+                        <p class="google-auth-notice">
+                            <i class="fa-brands fa-google"></i>
+                            <span>Étape 1 : Authentifiez-vous pour vérifier votre email</span>
+                        </p>
+                        <div id="g_id_onload"
+                             data-client_id="275816824199-90b6qlloilida9qls7trfig0ebl02utf.apps.googleusercontent.com"
+                             data-context="signin"
+                             data-ux_mode="popup"
+                             data-callback="handleGoogleCredentialResponse"
+                             data-auto_prompt="false">
+                        </div>
+                        <div class="g_id_signin"
+                             data-type="standard"
+                             data-shape="rectangular"
+                             data-theme="outline"
+                             data-text="continue_with"
+                             data-size="large"
+                             data-logo_alignment="left">
+                        </div>
+                    </div>
+
+                    <!-- Google Authenticated Badge (Hidden by default) -->
+                    <div id="google-user-badge" class="google-user-badge" style="display: none;">
+                        <div class="google-user-info">
+                            <i class="fa-solid fa-circle-check google-verified-icon"></i>
+                            <span>Connecté avec Google : <strong id="google-user-email"></strong></span>
+                        </div>
+                        <button type="button" id="btn-google-logout" class="btn-google-logout" title="Changer de compte">
+                            <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                        </button>
+                    </div>
+
                     <form id="contact-form">
+                        <!-- Honeypot anti-bot (invisible pour les humains) -->
+                        <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                        </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">Votre nom</label>
                                 <input type="text" id="name" name="name" placeholder="Dylan Raberanto" required>
                             </div>
                             <div class="form-group">
-                                <label for="email">Votre email</label>
-                                <input type="mail" id="email" name="email" placeholder="vous@gmail.com" required>
+                                <label for="email">Votre email (Vérifié Google)</label>
+                                <input type="email" id="email" name="email" placeholder="Authentifiez-vous avec Google..." required readonly>
                             </div>
                         </div>
                         <div class="form-group">
@@ -483,9 +523,9 @@
                             <label for="message">Message</label>
                             <textarea id="message" name="message" rows="5" placeholder="Bonjour Dylan, je souhaite vous contacter au sujet de..." required></textarea>
                         </div>
-                        <button type="submit" class="btn-send-contact" id="btn-send">
-                            <i class="fa-solid fa-paper-plane"></i>
-                            <span>Envoyer le message</span>
+                        <button type="submit" class="btn-send-contact" id="btn-send" disabled>
+                            <i class="fa-solid fa-lock"></i>
+                            <span>Authentifiez-vous avec Google pour envoyer</span>
                         </button>
                         <p class="form-status" id="form-status"></p>
                     </form>
