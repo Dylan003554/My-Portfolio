@@ -83,6 +83,7 @@ module.exports = async function handler(req, res) {
 
         if (privateKey) {
             emailJsPayload.accessToken = privateKey;
+            emailJsPayload.private_key = privateKey;
             headers['Authorization'] = `Bearer ${privateKey}`;
         }
 
