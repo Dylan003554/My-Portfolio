@@ -302,7 +302,7 @@ window.addEventListener('scroll', revealOnScroll);
 
         const tokenPayload = parseJwt(response.credential);
         if (!tokenPayload || !tokenPayload.email) {
-            formStatus.textContent = '✗ Impossible de lire les informations de votre compte Google.';
+            formStatus.textContent = 'Impossible de lire les informations de votre compte Google.';
             formStatus.className = 'form-status error';
             return;
         }
@@ -393,7 +393,7 @@ window.addEventListener('scroll', revealOnScroll);
         // 1. Honeypot check
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value !== '') {
-            formStatus.textContent = ' Message envoyé avec succès !';
+            formStatus.textContent = 'Message envoyé avec succès';
             formStatus.className = 'form-status success';
             contactForm.reset();
             return;
@@ -454,7 +454,7 @@ window.addEventListener('scroll', revealOnScroll);
                 document.getElementById('subject').value = '';
                 document.getElementById('message').value = '';
 
-                formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
+                formStatus.textContent = `${'Message envoyé avec succès'}`;
                 formStatus.className = 'form-status success';
             } else {
                 const errStr = data.error || '';
