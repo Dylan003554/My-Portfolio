@@ -245,15 +245,15 @@ window.addEventListener('scroll', revealOnScroll);
 // CONTACT FORM — Google Auth + Vercel API + Anti-Spam
 // ========================================
 (function () {
-    const contactForm      = document.getElementById('contact-form');
-    const btnSend          = document.getElementById('btn-send');
-    const formStatus       = document.getElementById('form-status');
-    const googleAuthBox    = document.getElementById('google-auth-box');
-    const googleUserBadge  = document.getElementById('google-user-badge');
-    const googleUserEmail  = document.getElementById('google-user-email');
-    const btnGoogleLogout  = document.getElementById('btn-google-logout');
-    const nameInput        = document.getElementById('name');
-    const emailInput       = document.getElementById('email');
+    const contactForm = document.getElementById('contact-form');
+    const btnSend = document.getElementById('btn-send');
+    const formStatus = document.getElementById('form-status');
+    const googleAuthBox = document.getElementById('google-auth-box');
+    const googleUserBadge = document.getElementById('google-user-badge');
+    const googleUserEmail = document.getElementById('google-user-email');
+    const btnGoogleLogout = document.getElementById('btn-google-logout');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
 
     if (!contactForm) return;
 
@@ -262,10 +262,10 @@ window.addEventListener('scroll', revealOnScroll);
 
     // ─── ANTI-SPAM CONFIG ─────────────────────────────────────────────────────
     const MAX_SENDS_PER_SESSION = 3;
-    const COOLDOWN_MS           = 60000;
-    const MIN_FILL_TIME_MS      = 3000;
+    const COOLDOWN_MS = 60000;
+    const MIN_FILL_TIME_MS = 3000;
 
-    let sendCount    = 0;
+    let sendCount = 0;
     let lastSendTime = 0;
     const formLoadTime = Date.now();
 
@@ -283,7 +283,7 @@ window.addEventListener('scroll', revealOnScroll);
         try {
             const base64Url = token.split('.')[1];
             const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
             return JSON.parse(jsonPayload);
@@ -326,7 +326,7 @@ window.addEventListener('scroll', revealOnScroll);
         // Déverrouillage du bouton d'envoi
         btnSend.disabled = false;
         btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Envoyer le message</span>';
-        formStatus.textContent = '✓ Compte Google vérifié avec succès. Vous pouvez envoyer votre message.';
+        formStatus.textContent = ' Compte Google vérifié avec succès. Vous pouvez envoyer votre message.';
         formStatus.className = 'form-status success';
     };
 
@@ -361,9 +361,9 @@ window.addEventListener('scroll', revealOnScroll);
 
     function startCooldownTimer(seconds) {
         if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
-        
+
         let remaining = seconds;
-        formStatus.textContent = `⏳ Veuillez réessayer dans ${remaining}s`;
+        formStatus.textContent = `Veuillez réessayer dans ${remaining}s`;
         formStatus.className = 'form-status error';
 
         cooldownTimerInterval = setInterval(function () {
@@ -374,7 +374,7 @@ window.addEventListener('scroll', revealOnScroll);
                 formStatus.textContent = '';
                 formStatus.className = 'form-status';
             } else {
-                formStatus.textContent = `⏳ Veuillez réessayer dans ${remaining}s`;
+                formStatus.textContent = `Veuillez réessayer dans ${remaining}s`;
             }
         }, 1000);
     }
@@ -393,7 +393,7 @@ window.addEventListener('scroll', revealOnScroll);
         // 1. Honeypot check
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value !== '') {
-            formStatus.textContent = '✓ Message envoyé avec succès !';
+            formStatus.textContent = ' Message envoyé avec succès !';
             formStatus.className = 'form-status success';
             contactForm.reset();
             return;
@@ -418,7 +418,7 @@ window.addEventListener('scroll', revealOnScroll);
 
         // 4. Anti-bot speed check
         if (now - formLoadTime < MIN_FILL_TIME_MS) {
-            formStatus.textContent = '✓ Message envoyé avec succès !';
+            formStatus.textContent = 'Message envoyé avec succès';
             formStatus.className = 'form-status success';
             contactForm.reset();
             return;
@@ -449,12 +449,12 @@ window.addEventListener('scroll', revealOnScroll);
                 sendCount++;
                 lastSendTime = Date.now();
                 if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
-                
+
                 // Réinitialiser les champs texte
                 document.getElementById('subject').value = '';
                 document.getElementById('message').value = '';
 
-                formStatus.textContent = `✓ ${data.message || 'Message envoyé avec succès'}`;
+                formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
                 formStatus.className = 'form-status success';
             } else {
                 const errStr = data.error || '';
@@ -466,7 +466,7 @@ window.addEventListener('scroll', revealOnScroll);
                     formStatus.textContent = "Trop de tentatives d'envoi";
                     formStatus.className = 'form-status error';
                 } else {
-                    formStatus.textContent = `✗ ${errStr || 'Erreur lors de l\'envoi du message.'}`;
+                    formStatus.textContent = `${errStr || 'Erreur lors de l\'envoi du message.'}`;
                     formStatus.className = 'form-status error';
                 }
             }
