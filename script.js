@@ -356,6 +356,29 @@ window.addEventListener('scroll', revealOnScroll);
         });
     }
 
+    // ─── MINUTEUR COOLDOWN (60 secondes) ──────────────────────────────────────
+    let cooldownTimerInterval = null;
+
+    function startCooldownTimer(seconds) {
+        if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+        
+        let remaining = seconds;
+        formStatus.textContent = `⏳ Veuillez réessayer dans ${remaining}s`;
+        formStatus.className = 'form-status error';
+
+        cooldownTimerInterval = setInterval(function () {
+            remaining--;
+            if (remaining <= 0) {
+                clearInterval(cooldownTimerInterval);
+                cooldownTimerInterval = null;
+                formStatus.textContent = '';
+                formStatus.className = 'form-status';
+            } else {
+                formStatus.textContent = `⏳ Veuillez réessayer dans ${remaining}s`;
+            }
+        }, 1000);
+    }
+
     // ─── SOUMISSION DU FORMULAIRE VIA API BACKEND VERCEL ───────────────────────
     contactForm.addEventListener('submit', async function (event) {
         event.preventDefault();
@@ -376,22 +399,24 @@ window.addEventListener('scroll', revealOnScroll);
             return;
         }
 
-        // 2. Rate Limiting
-        if (sendCount >= MAX_SENDS_PER_SESSION) {
+        // 2. Limite par session (Max 2 envois)
+        if (sendCount >= 2) {
+            if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
             formStatus.textContent = "Trop de tentatives d'envoi";
             formStatus.className = 'form-status error';
             return;
         }
 
+        // 3. Cooldown 60s
         const now = Date.now();
         const timeSinceLastSend = now - lastSendTime;
         if (lastSendTime > 0 && timeSinceLastSend < COOLDOWN_MS) {
-            formStatus.textContent = "Trop de tentatives d'envoi";
-            formStatus.className = 'form-status error';
+            const secsLeft = Math.ceil((COOLDOWN_MS - timeSinceLastSend) / 1000);
+            startCooldownTimer(secsLeft);
             return;
         }
 
-        // 3. Anti-bot speed check
+        // 4. Anti-bot speed check
         if (now - formLoadTime < MIN_FILL_TIME_MS) {
             formStatus.textContent = '✓ Message envoyé avec succès !';
             formStatus.className = 'form-status success';
@@ -399,11 +424,9 @@ window.addEventListener('scroll', revealOnScroll);
             return;
         }
 
-        // 4. Envoi de la requête au backend Vercel pour vérification et envoi EmailJS
+        // 5. Envoi de la requête au backend Vercel pour vérification et envoi EmailJS
         btnSend.disabled = true;
         btnSend.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Vérification et envoi...</span>';
-        formStatus.textContent = '';
-        formStatus.className = 'form-status';
 
         try {
             const response = await fetch('/api/send-email', {
@@ -425,24 +448,47 @@ window.addEventListener('scroll', revealOnScroll);
             if (response.ok && data.success) {
                 sendCount++;
                 lastSendTime = Date.now();
-                formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
-                formStatus.className = 'form-status success';
                 
-                // Réinitialiser les champs texte (sujet + message), tout en conservant le token Google
+                // Réinitialiser les champs texte
                 document.getElementById('subject').value = '';
                 document.getElementById('message').value = '';
+
+                if (sendCount >= 2) {
+                    if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+                    formStatus.textContent = "Trop de tentatives d'envoi";
+                    formStatus.className = 'form-status error';
+                } else {
+                    formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
+                    formStatus.className = 'form-status success';
+                    
+                    // Lancer le décompte live de 60s
+                    startCooldownTimer(60);
+                }
             } else {
-                formStatus.textContent = `✗ ${data.error || 'Erreur lors de l\'envoi du message.'}`;
-                formStatus.className = 'form-status error';
+                const errStr = data.error || '';
+                if (errStr.startsWith('cooldown:')) {
+                    const secs = parseInt(errStr.split(':')[1], 10) || 60;
+                    startCooldownTimer(secs);
+                } else if (errStr.includes("Trop de tentatives")) {
+                    if (cooldownTimerInterval) clearInterval(cooldownTimerInterval);
+                    formStatus.textContent = "Trop de tentatives d'envoi";
+                    formStatus.className = 'form-status error';
+                } else {
+                    formStatus.textContent = `✗ ${errStr || 'Erreur lors de l\'envoi du message.'}`;
+                    formStatus.className = 'form-status error';
+                }
             }
         } catch (error) {
             console.error('[Frontend] Erreur de communication avec le backend Vercel:', error);
             formStatus.textContent = '✗ Impossible de contacter le serveur d\'envoi. Vérifiez votre connexion.';
             formStatus.className = 'form-status error';
         } finally {
-            if (googleCredentialToken) {
+            if (googleCredentialToken && sendCount < 2) {
                 btnSend.disabled = false;
                 btnSend.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Envoyer le message</span>';
+            } else if (sendCount >= 2) {
+                btnSend.disabled = true;
+                btnSend.innerHTML = '<i class="fa-solid fa-lock"></i> <span>Limite d\'envoi atteinte</span>';
             }
         }
     });

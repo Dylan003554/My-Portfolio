@@ -98,7 +98,8 @@ module.exports = async function handler(req, res) {
         // 4a. Cooldown de 60 secondes entre deux envois
         const lastSent = userSends.length > 0 ? userSends[userSends.length - 1] : 0;
         if (lastSent > 0 && (now - lastSent < COOLDOWN_MS)) {
-            return res.status(429).json({ error: 'Trop de tentatives d\'envoi' });
+            const secsLeft = Math.ceil((COOLDOWN_MS - (now - lastSent)) / 1000);
+            return res.status(429).json({ error: `cooldown:${secsLeft}` });
         }
 
         // 4b. Bloquer si l'adresse email a atteint la limite de 2 envois en 24h
