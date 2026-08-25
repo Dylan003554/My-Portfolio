@@ -336,9 +336,8 @@ window.addEventListener('scroll', revealOnScroll);
             googleCredentialToken = null;
 
             // Réinitialisation du champ email
-            emailInput.value = '';
-            emailInput.readOnly = false;
-            googleUserEmail.textContent = '';
+            if (emailInput) emailInput.value = '';
+            if (googleUserEmail) googleUserEmail.textContent = '';
 
             // Bascule UI
             if (googleUserBadge) googleUserBadge.style.display = 'none';
@@ -426,7 +425,7 @@ window.addEventListener('scroll', revealOnScroll);
             if (response.ok && data.success) {
                 sendCount++;
                 lastSendTime = Date.now();
-                formStatus.textContent = `✓ ${data.message || 'Message envoyé avec succès !'}`;
+                formStatus.textContent = `${data.message || 'Message envoyé avec succès'}`;
                 formStatus.className = 'form-status success';
                 
                 // Réinitialiser les champs texte (sujet + message), tout en conservant le token Google
