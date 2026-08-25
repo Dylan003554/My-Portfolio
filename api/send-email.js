@@ -76,16 +76,19 @@ module.exports = async function handler(req, res) {
             }
         };
 
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        };
+
         if (privateKey) {
             emailJsPayload.accessToken = privateKey;
+            headers['Authorization'] = `Bearer ${privateKey}`;
         }
 
         const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
+            headers: headers,
             body: JSON.stringify(emailJsPayload)
         });
 
