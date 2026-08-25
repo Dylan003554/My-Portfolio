@@ -1,4 +1,31 @@
 const { OAuth2Client } = require('google-auth-library');
+const fs = require('fs');
+const path = require('path');
+
+// Fichier local sécurisé de stockage (/tmp est accessible en écriture sur les environnement serverless / Node)
+const TRACKER_FILE = path.join('/tmp', 'sent-emails-store.json');
+const MAX_EMAILS_PER_ACCOUNT = 3;
+const COOLDOWN_MS = 60000; // 60 secondes
+
+function getEmailRecords() {
+    try {
+        if (fs.existsSync(TRACKER_FILE)) {
+            const data = fs.readFileSync(TRACKER_FILE, 'utf8');
+            return JSON.parse(data) || {};
+        }
+    } catch (e) {
+        console.error('[Tracker] Erreur lecture fichier:', e);
+    }
+    return {};
+}
+
+function saveEmailRecords(records) {
+    try {
+        fs.writeFileSync(TRACKER_FILE, JSON.stringify(records, null, 2), 'utf8');
+    } catch (e) {
+        console.error('[Tracker] Erreur écriture fichier:', e);
+    }
+}
 
 module.exports = async function handler(req, res) {
     // Configuration CORS
@@ -54,11 +81,27 @@ module.exports = async function handler(req, res) {
             return res.status(401).json({ error: 'Compte ou adresse email Google non vérifié.' });
         }
 
-        // --- Données certifiées et extraites directement du jeton signé par Google ---
+        // --- Données certifiées extraites directement du jeton Google ---
         const verifiedEmail = payload.email;
         const verifiedName  = payload.name || clientName || 'Visiteur Google';
 
-        // 4. Envoi sécurisé via l'API REST officielle de EmailJS
+        // 4. GESTION DE LA LIMITATION PAR ADRESSE EMAIL ET COOLDOWN (FICHIER STORE)
+        const records = getEmailRecords();
+        const emailKey = verifiedEmail.toLowerCase().trim();
+        const userRecord = records[emailKey] || { count: 0, lastSent: 0 };
+        const now = Date.now();
+
+        // 4a. Vérification du Cooldown de 60 secondes
+        if (userRecord.lastSent > 0 && (now - userRecord.lastSent < COOLDOWN_MS)) {
+            return res.status(429).json({ error: 'Trop de tentatives d\'envoi' });
+        }
+
+        // 4b. Vérification de la limite stricte de 3 envois maximum par cette adresse email
+        if (userRecord.count >= MAX_EMAILS_PER_ACCOUNT) {
+            return res.status(429).json({ error: 'Trop de tentatives d\'envoi' });
+        }
+
+        // 5. Envoi via l'API REST officielle EmailJS
         const serviceId  = process.env.EMAILJS_SERVICE_ID || 'service_hpvtp3b';
         const templateId = process.env.EMAILJS_TEMPLATE_ID || 'template_3fq4c9n';
         const publicKey  = process.env.EMAILJS_PUBLIC_KEY || 'iL_aGupBFyMkdP6fm';
@@ -89,10 +132,17 @@ module.exports = async function handler(req, res) {
         });
 
         if (response.ok) {
+            // Mettre à jour et sauvegarder l'historique d'envoi dans le fichier
+            userRecord.count += 1;
+            userRecord.lastSent = Date.now();
+            records[emailKey] = userRecord;
+            saveEmailRecords(records);
+
             return res.status(200).json({
                 success: true,
                 message: '✓ Message envoyé avec succès !',
-                verifiedEmail: verifiedEmail
+                verifiedEmail: verifiedEmail,
+                remainingSends: MAX_EMAILS_PER_ACCOUNT - userRecord.count
             });
         } else {
             const errorText = await response.text();

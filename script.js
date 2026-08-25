@@ -380,7 +380,7 @@ window.addEventListener('scroll', revealOnScroll);
 
         // 2. Rate Limiting
         if (sendCount >= MAX_SENDS_PER_SESSION) {
-            formStatus.textContent = '⚠ Vous avez atteint la limite d\'envoi pour cette session.';
+            formStatus.textContent = "Trop de tentatives d'envoi";
             formStatus.className = 'form-status error';
             return;
         }
@@ -388,8 +388,7 @@ window.addEventListener('scroll', revealOnScroll);
         const now = Date.now();
         const timeSinceLastSend = now - lastSendTime;
         if (lastSendTime > 0 && timeSinceLastSend < COOLDOWN_MS) {
-            const secsLeft = Math.ceil((COOLDOWN_MS - timeSinceLastSend) / 1000);
-            formStatus.textContent = `⏳ Veuillez patienter ${secsLeft}s avant de renvoyer un message.`;
+            formStatus.textContent = "Trop de tentatives d'envoi";
             formStatus.className = 'form-status error';
             return;
         }
