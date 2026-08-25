@@ -310,9 +310,8 @@ window.addEventListener('scroll', revealOnScroll);
         // Sauvegarde du jeton certifié
         googleCredentialToken = response.credential;
 
-        // Pré-remplissage et verrouillage de l'adresse email
-        emailInput.value = tokenPayload.email;
-        emailInput.readOnly = true;
+        // Pré-remplissage du champ email masqué
+        if (emailInput) emailInput.value = tokenPayload.email;
 
         // Pré-remplissage du nom si vide
         if (tokenPayload.name && (!nameInput.value || nameInput.value.trim() === '')) {

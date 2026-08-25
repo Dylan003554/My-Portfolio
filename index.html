@@ -463,41 +463,7 @@
                 <div class="contact-form-panel">
                     <div class="contact-form-header">
                         <h3>Envoyer un message</h3>
-                        <p>Veuillez vous authentifier avec Google pour débloquer l'envoi.</p>
-                    </div>
-
-                    <!-- Google Authentication Container -->
-                    <div class="google-auth-box" id="google-auth-box">
-                        <p class="google-auth-notice">
-                            <i class="fa-brands fa-google"></i>
-                            <span>Étape 1 : Authentifiez-vous pour vérifier votre email</span>
-                        </p>
-                        <div id="g_id_onload"
-                             data-client_id="275816824199-90b6qlloilida9qls7trfig0ebl02utf.apps.googleusercontent.com"
-                             data-context="signin"
-                             data-ux_mode="popup"
-                             data-callback="handleGoogleCredentialResponse"
-                             data-auto_prompt="false">
-                        </div>
-                        <div class="g_id_signin"
-                             data-type="standard"
-                             data-shape="rectangular"
-                             data-theme="outline"
-                             data-text="continue_with"
-                             data-size="large"
-                             data-logo_alignment="left">
-                        </div>
-                    </div>
-
-                    <!-- Google Authenticated Badge (Hidden by default) -->
-                    <div id="google-user-badge" class="google-user-badge" style="display: none;">
-                        <div class="google-user-info">
-                            <i class="fa-solid fa-circle-check google-verified-icon"></i>
-                            <span>Connecté avec Google : <strong id="google-user-email"></strong></span>
-                        </div>
-                        <button type="button" id="btn-google-logout" class="btn-google-logout" title="Changer de compte">
-                            <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
-                        </button>
+                        <p>Veuillez sélectionner un compte Google pour débloquer l'envoi.</p>
                     </div>
 
                     <form id="contact-form">
@@ -505,16 +471,46 @@
                         <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
                             <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
                         </div>
+                        
+                        <!-- Champ email masqué (rempli automatiquement par Google) -->
+                        <input type="hidden" id="email" name="email">
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="name">Votre nom</label>
                                 <input type="text" id="name" name="name" placeholder="Dylan Raberanto" required>
                             </div>
                             <div class="form-group">
-                                <label for="email">Votre email (Vérifié Google)</label>
-                                <input type="email" id="email" name="email" placeholder="Authentifiez-vous avec Google..." required readonly>
+                                <label>Votre adresse mail :</label>
+                                <!-- Google Authentication Box -->
+                                <div class="google-auth-box" id="google-auth-box" style="margin-bottom:0; padding:10px 14px;">
+                                    <div id="g_id_onload"
+                                         data-client_id="275816824199-90b6qlloilida9qls7trfig0ebl02utf.apps.googleusercontent.com"
+                                         data-context="signin"
+                                         data-ux_mode="popup"
+                                         data-callback="handleGoogleCredentialResponse"
+                                         data-auto_prompt="false">
+                                    </div>
+                                    <div class="g_id_signin"
+                                         data-type="standard"
+                                         data-shape="rectangular"
+                                         data-theme="outline"
+                                         data-text="continue_with"
+                                         data-size="medium"
+                                         data-logo_alignment="left">
+                                    </div>
+                                </div>
+
+                                <!-- Badge Email Vérifié (Affiché une fois connecté, sans bouton déconnexion) -->
+                                <div id="google-user-badge" class="google-user-badge" style="display: none; margin-bottom:0; padding:10px 14px;">
+                                    <div class="google-user-info">
+                                        <i class="fa-solid fa-circle-check google-verified-icon"></i>
+                                        <span><strong id="google-user-email"></strong></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="subject">Sujet</label>
                             <input type="text" id="subject" name="subject" placeholder="Proposition de stage, Question..." required>

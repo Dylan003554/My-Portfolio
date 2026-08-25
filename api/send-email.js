@@ -2,10 +2,11 @@ const { OAuth2Client } = require('google-auth-library');
 const fs = require('fs');
 const path = require('path');
 
-// Fichier local sécurisé de stockage (/tmp est accessible en écriture sur les environnement serverless / Node)
+// Fichier local sécurisé (/tmp sur Vercel/Node)
 const TRACKER_FILE = path.join('/tmp', 'sent-emails-store.json');
-const MAX_EMAILS_PER_ACCOUNT = 3;
-const COOLDOWN_MS = 60000; // 60 secondes
+const MAX_EMAILS_PER_ACCOUNT = 2;              // Max 2 envois
+const COOLDOWN_MS = 60000;                    // 60 secondes entre 2 envois
+const TIME_WINDOW_24H = 24 * 60 * 60 * 1000;  // Fenêtre de 24h (en ms)
 
 function getEmailRecords() {
     try {
@@ -85,19 +86,23 @@ module.exports = async function handler(req, res) {
         const verifiedEmail = payload.email;
         const verifiedName  = payload.name || clientName || 'Visiteur Google';
 
-        // 4. GESTION DE LA LIMITATION PAR ADRESSE EMAIL ET COOLDOWN (FICHIER STORE)
+        // 4. SUIVI ET RESTRICTION : MAX 2 ENVOIS PAR 24H ET COOLDOWN DE 60S
         const records = getEmailRecords();
         const emailKey = verifiedEmail.toLowerCase().trim();
-        const userRecord = records[emailKey] || { count: 0, lastSent: 0 };
+        let userSends = records[emailKey] || [];
         const now = Date.now();
 
-        // 4a. Vérification du Cooldown de 60 secondes
-        if (userRecord.lastSent > 0 && (now - userRecord.lastSent < COOLDOWN_MS)) {
+        // Filtrer et ne garder que les envois effectués dans les dernières 24h
+        userSends = userSends.filter(timestamp => (now - timestamp) < TIME_WINDOW_24H);
+
+        // 4a. Cooldown de 60 secondes entre deux envois
+        const lastSent = userSends.length > 0 ? userSends[userSends.length - 1] : 0;
+        if (lastSent > 0 && (now - lastSent < COOLDOWN_MS)) {
             return res.status(429).json({ error: 'Trop de tentatives d\'envoi' });
         }
 
-        // 4b. Vérification de la limite stricte de 3 envois maximum par cette adresse email
-        if (userRecord.count >= MAX_EMAILS_PER_ACCOUNT) {
+        // 4b. Bloquer si l'adresse email a atteint la limite de 2 envois en 24h
+        if (userSends.length >= MAX_EMAILS_PER_ACCOUNT) {
             return res.status(429).json({ error: 'Trop de tentatives d\'envoi' });
         }
 
@@ -132,17 +137,15 @@ module.exports = async function handler(req, res) {
         });
 
         if (response.ok) {
-            // Mettre à jour et sauvegarder l'historique d'envoi dans le fichier
-            userRecord.count += 1;
-            userRecord.lastSent = Date.now();
-            records[emailKey] = userRecord;
+            // Mettre à jour l'historique des envois pour cette adresse email
+            userSends.push(now);
+            records[emailKey] = userSends;
             saveEmailRecords(records);
 
             return res.status(200).json({
                 success: true,
                 message: '✓ Message envoyé avec succès !',
-                verifiedEmail: verifiedEmail,
-                remainingSends: MAX_EMAILS_PER_ACCOUNT - userRecord.count
+                verifiedEmail: verifiedEmail
             });
         } else {
             const errorText = await response.text();
