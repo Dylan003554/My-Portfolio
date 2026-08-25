@@ -477,13 +477,9 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="name">Votre nom</label>
-                                <input type="text" id="name" name="name" placeholder="Dylan Raberanto" required>
-                            </div>
-                            <div class="form-group">
                                 <label>Votre adresse mail :</label>
                                 <!-- Google Authentication Box -->
-                                <div class="google-auth-box" id="google-auth-box" style="margin-bottom:0; padding:10px 14px;">
+                                <div class="google-auth-box" id="google-auth-box">
                                     <div id="g_id_onload"
                                          data-client_id="275816824199-90b6qlloilida9qls7trfig0ebl02utf.apps.googleusercontent.com"
                                          data-context="signin"
@@ -496,18 +492,23 @@
                                          data-shape="rectangular"
                                          data-theme="outline"
                                          data-text="continue_with"
-                                         data-size="medium"
+                                         data-size="large"
                                          data-logo_alignment="left">
                                     </div>
                                 </div>
 
-                                <!-- Badge Email Vérifié (Affiché une fois connecté, sans bouton déconnexion) -->
-                                <div id="google-user-badge" class="google-user-badge" style="display: none; margin-bottom:0; padding:10px 14px;">
+                                <!-- Badge Email Vérifié (Affiché une fois connecté) -->
+                                <div id="google-user-badge" class="google-user-badge" style="display: none;">
                                     <div class="google-user-info">
                                         <i class="fa-solid fa-circle-check google-verified-icon"></i>
                                         <span><strong id="google-user-email"></strong></span>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="name">Votre nom</label>
+                                <input type="text" id="name" name="name" placeholder="Dylan Raberanto" required>
                             </div>
                         </div>
 

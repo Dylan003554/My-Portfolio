@@ -1154,43 +1154,26 @@ section {
 
 /* --- GOOGLE AUTH BOX & BADGE --- */
 .google-auth-box {
-    background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 12px;
-    padding: 18px 20px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
-}
-
-.google-auth-notice {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #334155;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0;
-}
-
-.google-auth-notice i {
-    color: #4285f4;
-    font-size: 1rem;
+    justify-content: flex-start;
 }
 
 .google-user-badge {
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
-    border-radius: 12px;
-    padding: 14px 18px;
-    margin-bottom: 24px;
+    border-radius: 10px;
+    height: 42px;
+    padding: 0 14px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
+    justify-content: flex-start;
+    box-sizing: border-box;
 }
 
 .google-user-info {
